@@ -4,6 +4,9 @@ using SalesWebMvc.Data;
 using System;
 using System.Configuration;
 using System.Linq.Expressions;
+using SalesWebMvc.Services;
+
+
 namespace SalesWebMvc
 {
     public class Program
@@ -23,6 +26,7 @@ namespace SalesWebMvc
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<SeedingService>();
+            builder.Services.AddScoped<SellerService>();
 
             var app = builder.Build();
 
