@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SalesWebMvc.Data;
 using System;
 using System.Configuration;
+using System.Linq.Expressions;
 namespace SalesWebMvc
 {
     public class Program
@@ -11,20 +12,32 @@ namespace SalesWebMvc
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //builder.Services.AddDbContext<SalesWebMvcContext>(options =>
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebMvcContext") ?? throw new InvalidOperationException("Connection string 'SalesWebMvcContext' not found.")));
-
             builder.Services.AddDbContext<SalesWebMvcContext>(options =>
                 options.UseMySql(
                     builder.Configuration.GetConnectionString("SalesWebMvcContext"),
                     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("SalesWebMvcContext")),
                     mysqlOptions => mysqlOptions.MigrationsAssembly("SalesWebMvc")));
-
+            
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddScoped<SeedingService>();
+
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var seedingService = services.GetRequiredService<SeedingService>();
+                    seedingService.Seed();
+                } catch (Exception ex)
+                    {
+                        Console.WriteLine("Erro ao popular o banco de dados: " + ex.Message);
+                    }
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -36,9 +49,7 @@ namespace SalesWebMvc
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.MapControllerRoute(
