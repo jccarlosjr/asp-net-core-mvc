@@ -9,7 +9,7 @@ namespace SalesWebMvc.Controllers
     {
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
-           
+
         public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
@@ -22,7 +22,7 @@ namespace SalesWebMvc.Controllers
             return View(list);
         }
 
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             var departments = _departmentService.FindAll();
             var viewModel = new SellerFormViewModel { Departments = departments };
@@ -44,7 +44,7 @@ namespace SalesWebMvc.Controllers
                 return NotFound();
             }
             var obj = _sellerService.FindById(id.Value);
-            if (obj == null) 
+            if (obj == null)
             {
                 return NotFound();
             }
@@ -57,6 +57,20 @@ namespace SalesWebMvc.Controllers
         {
             _sellerService.Remove(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var obj = _sellerService.FindById(id.Value);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
         }
     }
 }
