@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Localization;
 using SalesWebMvc.Data;
 using System;
 using System.Configuration;
 using System.Linq.Expressions;
 using SalesWebMvc.Services;
+using System.Globalization;
 
 
 namespace SalesWebMvc
@@ -24,7 +26,6 @@ namespace SalesWebMvc
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
             builder.Services.AddScoped<SeedingService>();
             builder.Services.AddScoped<SellerService>();
             builder.Services.AddScoped<DepartmentService>();
@@ -43,6 +44,15 @@ namespace SalesWebMvc
                         Console.WriteLine("Erro ao popular o banco de dados: " + ex.Message);
                     }
             }
+
+            var enUs = new CultureInfo("en-US");
+            var localizationOptions = new RequestLocalizationOptions {
+                DefaultRequestCulture = new RequestCulture(enUs),
+                SupportedCultures = new List<CultureInfo> { enUs },
+                SupportedUICultures = new List<CultureInfo> { enUs }
+            };
+
+            app.UseRequestLocalization(localizationOptions);
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
