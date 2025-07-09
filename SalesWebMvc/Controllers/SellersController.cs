@@ -36,6 +36,7 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
         {
+            ModelState.Remove("Seller.Department");
             if (!ModelState.IsValid)
             {
                 var departments = _departmentService.FindAll();
@@ -102,6 +103,7 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller)
         {
+            ModelState.Remove("Seller.Department");
             if (!ModelState.IsValid)
             {
                 var departments = _departmentService.FindAll();
