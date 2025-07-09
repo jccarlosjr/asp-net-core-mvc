@@ -9,7 +9,7 @@ namespace SalesWebMvc.Data
 {
     public class SalesWebMvcContext : DbContext
     {
-        public SalesWebMvcContext (DbContextOptions<SalesWebMvcContext> options)
+        public SalesWebMvcContext(DbContextOptions<SalesWebMvcContext> options)
             : base(options)
         {
         }
@@ -17,5 +17,14 @@ namespace SalesWebMvc.Data
         public DbSet<Department> Department { get; set; } = default!;
         public DbSet<Seller> Seller { get; set; } = default!;
         public DbSet<SalesRecord> SalesRecords { get; set; } = default!;
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SalesRecord>()
+                .HasOne(sr => sr.Seller)
+                .WithMany(s => s.Sales)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
